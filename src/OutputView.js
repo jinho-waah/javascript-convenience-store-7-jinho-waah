@@ -22,18 +22,13 @@ export const OutputView = {
 
   printReceipt(receipt) {
     Console.print("\n==============W 편의점================");
-    Console.print("상품명\t\t수량\t금액");
+    Console.print("상품명 수량 금액");
 
     receipt.items.forEach((item) => {
       this.itemPrint(item.product, item.quantity);
     });
 
-    if (receipt.promotionDetails.length > 0) {
-      Console.print("=============증      정===============");
-      receipt.promotionDetails.forEach(({ productName, freeQuantity }) => {
-        this.promotionPrint({ productName, freeQuantity });
-      });
-    }
+    Console.print("=============증      정===============");
 
     receipt.promotionDetails.forEach(({ productName, freeQuantity }) => {
       this.promotionPrint({ productName, freeQuantity });
