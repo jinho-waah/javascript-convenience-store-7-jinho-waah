@@ -10,15 +10,15 @@ export const InputView = {
 
         const list = input.split(",");
         if (list.length === 1 && (input.match(/\[/g) || []).length > 1) {
-          throw new Error(
+          Console.print(
             "[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요."
           );
         }
-         
+
         const items = input.match(/\[(.*?)\]/g).map((item) => {
           const [name, quantity] = item.replace(/[\[\]]/g, "").split("-");
           if (!name || isNaN(parseInt(quantity))) {
-            throw new Error(
+            Console.print(
               "[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요."
             );
           }
@@ -26,7 +26,7 @@ export const InputView = {
         });
         return items;
       } catch (error) {
-        throw new Error(
+        Console.print(
           "[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요."
         );
       }
@@ -45,10 +45,10 @@ export const InputView = {
           case "N":
             return false;
           default:
-            throw new Error("[ERROR] 입력 값이 정확하지 않습니다.");
+            Console.print("[ERROR] 입력 값이 정확하지 않습니다.");
         }
       } catch (error) {
-        throw new Error("[ERROR] 입력 값이 정확하지 않습니다.");
+        Console.print("[ERROR] 입력 값이 정확하지 않습니다.");
       }
     }
   },
@@ -65,10 +65,10 @@ export const InputView = {
           case "N":
             return false;
           default:
-            throw new Error("[ERROR] 입력 값이 정확하지 않습니다.");
+            Console.print("[ERROR] 입력 값이 정확하지 않습니다.");
         }
       } catch (error) {
-        throw new Error("[ERROR] 입력 값이 정확하지 않습니다.");
+        Console.print("[ERROR] 입력 값이 정확하지 않습니다.");
       }
     }
   },
@@ -85,10 +85,10 @@ export const InputView = {
           case "N":
             return false;
           default:
-            throw new Error("[ERROR] 입력 값이 정확하지 않습니다.");
+            throw Console.print("[ERROR] 입력 값이 정확하지 않습니다.");
         }
       } catch (error) {
-        throw new Error("[ERROR] 입력 값이 정확하지 않습니다.");
+        throw Console.print("[ERROR] 입력 값이 정확하지 않습니다.");
       }
     }
   },
@@ -105,10 +105,12 @@ export const InputView = {
           case "N":
             return false;
           default:
-            throw new Error("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");
+            throw Console.print(
+              "[ERROR] 잘못된 입력입니다. 다시 입력해 주세요."
+            );
         }
       } catch (error) {
-        throw new Error("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");
+        throw Console.print("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");
       }
     }
   },
@@ -125,10 +127,10 @@ export const InputView = {
         } else if (input === "N") {
           return false;
         } else {
-          throw new Error("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");
+          throw Console.print("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");
         }
       } catch (error) {
-        throw new Error("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");
+        throw Console.print("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");
       }
     }
   },
