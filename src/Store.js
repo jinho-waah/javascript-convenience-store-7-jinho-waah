@@ -67,6 +67,13 @@ class Store {
         for (const { name, quantity } of selectedItems) {
           const { promotionalProduct, regularProduct } =
             this.getProductVariants(name);
+          
+           if (!promotionalProduct && !regularProduct) {
+             throw new Error(
+               `[ERROR] 존재하지 않는 상품입니다. 다시 입력해 주세요.`
+             );
+           }
+          
           let remainingQuantity = quantity;
           let noPromotionQuantity = 0;
 
