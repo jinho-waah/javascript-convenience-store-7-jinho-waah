@@ -176,27 +176,32 @@ class Store {
       const totalNonPromotionQuantity =
         noPromotionQuantity + nonPromotionQuantity;
 
-      await this.askPurcahse(flag, name, totalNonPromotionQuantity);
+      const proceedWithRegularPrice = await this.askPurchase(
+        flag,
+        name,
+        totalNonPromotionQuantity
+      );
 
-      this.receipt.addItem(regularProduct, nonPromotionQuantity);
-      regularProduct.reduceQuantity(nonPromotionQuantity);
-      return nonPromotionQuantity;
+      if (proceedWithRegularPrice) {
+        this.receipt.addItem(regularProduct, nonPromotionQuantity);
+        regularProduct.reduceQuantity(nonPromotionQuantity);
+        return nonPromotionQuantity;
+      } else {
+        return 0;
+      }
     }
     return 0;
   }
 
-  async askPurcahse(flag, name, totalNonPromotionQuantity) {
+  async askPurchase(flag, name, totalNonPromotionQuantity) {
     if (flag) {
       const proceedWithRegularPrice = await InputView.askRegularPricePurchase(
         name,
         totalNonPromotionQuantity
       );
-      if (!proceedWithRegularPrice) {
-        throw new Error(
-          `${name}의 프로모션 할인이 적용되지 않은 수량은 결제하지 않았습니다.`
-        );
-      }
+      return proceedWithRegularPrice;
     }
+    return true;
   }
 
   async membershipCheck(totalNonPromotionalPrice) {
