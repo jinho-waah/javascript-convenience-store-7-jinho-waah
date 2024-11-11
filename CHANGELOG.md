@@ -1,3 +1,4 @@
+- refactor: 테스트 코드 통과 완료
 - refactor: minor issue
 - feat: 공백 삭제
 - feat: 기능 구현 완료

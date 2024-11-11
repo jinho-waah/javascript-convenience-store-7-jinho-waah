@@ -57,46 +57,6 @@ class Store {
     return { promotionalProduct, regularProduct };
   }
 
-  // async processOrder() {
-  //   const selectedItems = await InputView.readSelectedItems();
-  //   this.receipt = new Receipt();
-  //   let totalNonPromotionalPrice = 0;
-
-  //   for (const { name, quantity } of selectedItems) {
-  //     const { promotionalProduct, regularProduct } =
-  //       this.getProductVariants(name);
-
-  //     let remainingQuantity = quantity;
-  //     let noPromotionQuantity = 0;
-  //     if (promotionalProduct?.quantity + regularProduct?.quantity < quantity) {
-  //       throw new Error(
-  //         "[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요."
-  //       );
-  //     }
-  //     if (!!promotionalProduct) {
-  //       ({ remainingQuantity, noPromotionQuantity } = await this.addPromotion(
-  //         promotionalProduct,
-  //         remainingQuantity,
-  //         noPromotionQuantity
-  //       ));
-  //     }
-
-  //     if (!!regularProduct) {
-  //       const nonPromotionQuantity = await this.addNoPromotion(
-  //         name,
-  //         regularProduct,
-  //         remainingQuantity,
-  //         remainingQuantity < quantity,
-  //         noPromotionQuantity
-  //       );
-  //       totalNonPromotionalPrice +=
-  //         regularProduct?.price * nonPromotionQuantity;
-  //     }
-  //   }
-
-  //   await this.membershipCheck(totalNonPromotionalPrice);
-  // }
-
   async processOrder() {
     while (true) {
       try {
@@ -189,7 +149,7 @@ class Store {
         freeItems = Math.floor(remainingQuantity / requiredQuantityForPromo);
       }
 
-      noPromotionQuantity = promoQuantity - freeItems * applicablePromotion.buy;
+      noPromotionQuantity = promoQuantity % (applicablePromotion.buy + 1);
       this.receipt.addItem(promotionalProduct, promoQuantity);
       promotionalProduct.reduceQuantity(promoQuantity);
       remainingQuantity -= promoQuantity;
