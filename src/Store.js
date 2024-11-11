@@ -187,6 +187,10 @@ class Store {
         regularProduct.reduceQuantity(nonPromotionQuantity);
         return nonPromotionQuantity;
       } else {
+        this.receipt.addItem(regularProduct, nonPromotionQuantity);
+        this.receipt.subItem(regularProduct, totalNonPromotionQuantity);
+        regularProduct.reduceQuantity(nonPromotionQuantity);
+        regularProduct.increaseQuantity(totalNonPromotionQuantity);
         return 0;
       }
     }

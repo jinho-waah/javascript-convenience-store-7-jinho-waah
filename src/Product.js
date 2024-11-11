@@ -10,6 +10,10 @@ class Product {
     if (this.quantity < count) throw new Error("재고가 부족합니다.");
     this.quantity -= count;
   }
+
+  increaseQuantity(count) {
+    this.quantity += count;
+  }
 }
 
 export default Product;
