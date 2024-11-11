@@ -154,4 +154,39 @@ describe("편의점", () => {
         "[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.",
     });
   });
+
+  // 추가 테스트 코드
+
+  test("프로모션 적용 상품 구매", async () => {
+    mockNowDate("2024-03-01"); // 프로모션이 활성화된 날짜로 설정
+
+    await run({
+      inputs: ["[콜라-3]", "N", "N"],
+      expectedIgnoringWhiteSpaces: [
+        "총구매액3,000",
+        "행사할인-1,000",
+        "내실돈2,000",
+      ],
+    });
+  });
+
+  test("잘못된 입력 형식 - 중첩된 괄호 형식 오류", async () => {
+    await runExceptions({
+      inputs: ["[콜라-1][사이다-2]", "N", "N"],
+      inputsToTerminate: INPUTS_TO_TERMINATE,
+      expectedErrorMessage:
+        "[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요.",
+    });
+  });
+
+  test("멤버십 할인 적용", async () => {
+    await run({
+      inputs: ["[에너지바-3]", "Y", "N"],
+      expectedIgnoringWhiteSpaces: [
+        "총구매액6,000",
+        "멤버십할인-1,800",
+        "내실돈4,200",
+      ],
+    });
+  });
 });

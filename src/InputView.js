@@ -33,7 +33,6 @@ export const InputView = {
         });
         return items;
       } catch (error) {
-        // 오류 메시지 출력 후 while 루프 재실행
         Console.print(error.message);
       }
     }
