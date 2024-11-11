@@ -33,7 +33,7 @@ export const InputView = {
         });
         return items;
       } catch (error) {
-        Console.print(error.message);
+        Console.print(`\n${error.message}`);
       }
     }
   },
@@ -53,7 +53,7 @@ export const InputView = {
             Console.print("[ERROR] 입력 값이 정확하지 않습니다.");
         }
       } catch (error) {
-        Console.print("[ERROR] 입력 값이 정확하지 않습니다.");
+        Console.print("\n[ERROR] 입력 값이 정확하지 않습니다.");
       }
     }
   },
@@ -70,10 +70,10 @@ export const InputView = {
           case "N":
             return false;
           default:
-            Console.print("[ERROR] 입력 값이 정확하지 않습니다.");
+            Console.print("\n[ERROR] 입력 값이 정확하지 않습니다.");
         }
       } catch (error) {
-        Console.print("[ERROR] 입력 값이 정확하지 않습니다.");
+        Console.print("\n[ERROR] 입력 값이 정확하지 않습니다.");
       }
     }
   },
@@ -90,10 +90,10 @@ export const InputView = {
           case "N":
             return false;
           default:
-            Console.print("[ERROR] 입력 값이 정확하지 않습니다.");
+            Console.print("\n[ERROR] 입력 값이 정확하지 않습니다.");
         }
       } catch (error) {
-        Console.print("[ERROR] 입력 값이 정확하지 않습니다.");
+        Console.print("\n[ERROR] 입력 값이 정확하지 않습니다.");
       }
     }
   },
@@ -109,7 +109,7 @@ export const InputView = {
         case "N":
           return false;
         default:
-          Console.print("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");
+          Console.print("\n[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");
       }
     }
   },
