@@ -22,41 +22,34 @@ export const OutputView = {
       this.itemPrint(item.product, item.quantity);
     });
     Console.print("=============증      정===============");
-    receipt.promotionDetails.map(({ productName, freeQuantity }) => {
+    receipt.promotionDetails.forEach(({ productName, freeQuantity }) => {
       this.promotionPrint({ productName, freeQuantity });
     });
     Console.print("====================================");
-    Console.print(`총구매액: \t\t${receipt.total}`);
-    Console.print(`행사할인: \t\t-${receipt.promotionDiscount}`);
-    Console.print(`멤버십할인: \t\t-${receipt.membershipDiscount}`);
-    Console.print(`내실돈: \t\t${receipt.calculateTotal()}`);
+    Console.print(`총구매액:\t\t${receipt.total}`);
+    Console.print(`행사할인:\t\t-${receipt.promotionDiscount}`);
+    Console.print(`멤버십할인:\t\t-${receipt.membershipDiscount}`);
+    Console.print(`내실돈:\t\t${receipt.calculateTotal()}`);
   },
 
   checkPromotion(promotion) {
     if (promotion !== "null") {
-      return promotion;
+      return ` ${promotion}`;
     } else if (promotion === "null") {
       return "";
     }
   },
 
   itemPrint(product, quantity) {
-    if (product.name.length < 4) {
-      Console.print(
-        `${product.name} \t\t${quantity} \t${product.price * quantity}`
-      );
-    } else {
-      Console.print(
-        `${product.name} \t${quantity} \t${product.price * quantity}`
-      );
-    }
+    const productName = product.name.padEnd(8, " ");
+    const quantityStr = String(quantity).padEnd(4, " ");
+    const totalPrice = String(product.price * quantity).padStart(6, " ");
+    Console.print(`${productName}\t${quantityStr}\t${totalPrice}`);
   },
 
   promotionPrint({ productName, freeQuantity }) {
-    if (productName.length < 4) {
-      Console.print(`${productName} \t\t${freeQuantity}`);
-    } else {
-      Console.print(`${productName} \t${freeQuantity} `);
-    }
+    const productNamePadded = productName.padEnd(8, " ");
+    const freeQuantityStr = String(freeQuantity).padStart(2, " ");
+    Console.print(`${productNamePadded}\t${freeQuantityStr}`);
   },
 };

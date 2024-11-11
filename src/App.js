@@ -22,7 +22,9 @@ class App {
 
       
     } catch (error) {
-      throw new Error(`[ERROR]` + error.message);
+      // throw new Error(`[ERROR]` + error.message);
+      // Console.print(`[ERROR] ${error.message}`);
+      throw error;
     }
   }
 }

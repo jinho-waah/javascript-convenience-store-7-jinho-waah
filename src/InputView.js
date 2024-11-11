@@ -7,6 +7,7 @@ export const InputView = {
         const input = await Console.readLineAsync(
           "\n구매하실 상품명과 수량을 입력해 주세요. (예: [사이다-2],[감자칩-1])\n"
         );
+        console.log(input);
         const items = input.match(/\[(.*?)\]/g).map((item) => {
           const [name, quantity] = item.replace(/[\[\]]/g, "").split("-");
           if (!name || isNaN(parseInt(quantity))) {
