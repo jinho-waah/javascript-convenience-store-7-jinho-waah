@@ -17,6 +17,7 @@ class Store {
     this.products = productData
       .split("\n")
       .slice(1)
+      .filter((line) => line.trim() !== "")
       .map((line) => {
         const [name, price, quantity, promotion] = line.split(",");
         return new Product(
@@ -33,6 +34,7 @@ class Store {
     this.promotions = promotionData
       .split("\n")
       .slice(1)
+      .filter((line) => line.trim() !== "")
       .map((line) => {
         const [name, buy, get, startDate, endDate] = line.split(",");
         return new Promotion(
