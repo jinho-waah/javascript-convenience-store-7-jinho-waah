@@ -7,6 +7,14 @@ export const InputView = {
         const input = await Console.readLineAsync(
           "\n구매하실 상품명과 수량을 입력해 주세요. (예: [사이다-2],[감자칩-1])\n"
         );
+
+        const list = input.split(",");
+        if (list.length === 1 && (input.match(/\[/g) || []).length > 1) {
+          throw new Error(
+            "[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요."
+          );
+        }
+         
         const items = input.match(/\[(.*?)\]/g).map((item) => {
           const [name, quantity] = item.replace(/[\[\]]/g, "").split("-");
           if (!name || isNaN(parseInt(quantity))) {
