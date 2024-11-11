@@ -18,8 +18,6 @@ class App {
       OutputView.printReceipt(store.receipt);
       const isContinue = await InputView.askContinue();
       if (!isContinue) break;
-
-      Console.print("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");
     }
     // } catch (error) {
     //   throw error;
