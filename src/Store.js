@@ -236,7 +236,7 @@ class Store {
         applicablePromotion.isApplicable(DateTimes.now())
       ) {
         const freeItems = Math.floor(quantity / (applicablePromotion.buy + 1));
-        discount += freeItems * product.price;
+        discount = freeItems * product.price;
         if (freeItems > 0) {
           appliedPromotions.push({ product, freeQuantity: freeItems });
         }
