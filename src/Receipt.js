@@ -8,14 +8,29 @@ class Receipt {
   }
 
   addItem(product, quantity) {
-    this.items.push({ product, quantity });
+    const existingItem = this.items.find(
+      (item) => item.product.name === product.name
+    );
+    if (existingItem) {
+      existingItem.quantity += quantity;
+    } else {
+      this.items.push({ product, quantity });
+    }
     this.total += product.price * quantity;
   }
 
   applyPromotion(promotionDiscount, appliedPromotions) {
-    this.promotionDiscount = promotionDiscount;
+    this.promotionDiscount += promotionDiscount;
+
     appliedPromotions.forEach(({ product, freeQuantity }) => {
-      this.addPromotionDetail(product, freeQuantity);
+      const existingPromo = this.promotionDetails.find(
+        (detail) => detail.productName === product.name
+      );
+      if (existingPromo) {
+        existingPromo.freeQuantity = freeQuantity;
+      } else {
+        this.addPromotionDetail(product, freeQuantity);
+      }
     });
   }
 

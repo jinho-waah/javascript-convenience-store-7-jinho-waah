@@ -9,16 +9,12 @@ class App {
       await store.loadProducts();
       await store.loadPromotions();
 
-      OutputView.welcome();
-      OutputView.printProducts(store.products);
-
       while (true) {
-        // 구매할 상품
+        OutputView.welcome();
+        OutputView.printProducts(store.products);
         const selectedItems = await InputView.readSelectedItems();
-        // 멤버심 확인
-        const membership = await InputView.askMembership();
-        // store에 정보 넣기
-        store.processOrder(selectedItems, membership);
+
+        await store.processOrder(selectedItems);
         OutputView.printReceipt(store.receipt);
         const isContinue = await InputView.askContinue();
         if (!isContinue) break;

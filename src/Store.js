@@ -1,24 +1,19 @@
-import { promises as fs } from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+import fs from "node:fs/promises";
 import Product from "./Product.js";
 import Promotion from "./Promotion.js";
 import Receipt from "./Receipt.js";
 import { DateTimes } from "@woowacourse/mission-utils";
+import { InputView } from "./InputView.js";
 
 class Store {
   constructor() {
     this.products = [];
     this.promotions = [];
-    this.receipt = new Receipt();
+    this.receipt = null;
   }
 
   async loadProducts() {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-    const filePath = path.join(__dirname, "../public/products.md");
-
-    const productData = await fs.readFile(filePath, "utf8");
+    const productData = await fs.readFile("./public/products.md", "utf8");
     this.products = productData
       .split("\n")
       .slice(1)
@@ -34,11 +29,7 @@ class Store {
   }
 
   async loadPromotions() {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-    const filePath = path.join(__dirname, "../public/promotions.md");
-
-    const promotionData = await fs.readFile(filePath, "utf8");
+    const promotionData = await fs.readFile("./public/promotions.md", "utf8");
     this.promotions = promotionData
       .split("\n")
       .slice(1)
@@ -54,53 +45,182 @@ class Store {
       });
   }
 
-  calculatePromotionDiscount() {
-    let discount = 0;
-    let nonPromotionalTotal = 0; // 프로모션이 적용되지 않은 제품들의 가격 합산
-    const appliedPromotions = [];
+  getProductVariants(name) {
+    const promotionalProduct = this.products.find(
+      (product) => product.name === name && product.promotion !== "null"
+    );
+    const regularProduct = this.products.find(
+      (product) => product.name === name && product.promotion === "null"
+    );
+    return { promotionalProduct, regularProduct };
+  }
 
-    this.receipt.items.forEach(({ product, quantity }) => {
+  async processOrder(selectedItems) {
+    this.receipt = new Receipt();
+
+    let totalNonPromotionalPrice = 0;
+
+    for (const { name, quantity } of selectedItems) {
+      const { promotionalProduct, regularProduct } =
+        this.getProductVariants(name);
+
+      let remainingQuantity = quantity;
+      let noPromotionQuantity = 0;
+      if (promotionalProduct.quantity + regularProduct.quantity < quantity) {
+        throw new Error(
+          " 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요."
+        );
+      }
+      if (!!promotionalProduct) {
+        ({ remainingQuantity, noPromotionQuantity } = await this.addPromotion(
+          promotionalProduct,
+          remainingQuantity,
+          noPromotionQuantity
+        ));
+      }
+
+      if (!!regularProduct) {
+        const nonPromotionQuantity = await this.addNoPromotion(
+          name,
+          regularProduct,
+          remainingQuantity,
+          remainingQuantity < quantity,
+          noPromotionQuantity
+        );
+        totalNonPromotionalPrice +=
+          regularProduct?.price * nonPromotionQuantity;
+      }
+    }
+
+    await this.membershipCheck(totalNonPromotionalPrice);
+  }
+
+  async addPromotion(
+    promotionalProduct,
+    remainingQuantity,
+    noPromotionQuantity
+  ) {
+    if (promotionalProduct && promotionalProduct.quantity > 0) {
       const applicablePromotion = this.promotions.find(
-        (promo) => promo.name === product.promotion
+        (promotion) => promotion.name === promotionalProduct.promotion
       );
 
-      if (applicablePromotion && applicablePromotion.isApplicable(new Date())) {
-        // 프로모션 적용 가능 시 무료 제공 수량 계산
+      let promoQuantity = Math.min(
+        promotionalProduct.quantity,
+        remainingQuantity
+      );
+      let freeItems = 0;
+
+      if (
+        applicablePromotion &&
+        applicablePromotion.isApplicable(DateTimes.now())
+      ) {
+        const requiredQuantityForPromo = applicablePromotion.buy + 1;
+
+        if (
+          promoQuantity < promotionalProduct.quantity &&
+          promoQuantity % requiredQuantityForPromo === applicablePromotion.buy
+        ) {
+          const wantAdditional = await InputView.askPromotionAddition(
+            promotionalProduct.name
+          );
+          if (wantAdditional) {
+            remainingQuantity += 1;
+            promoQuantity += 1;
+          }
+        }
+
+        freeItems = Math.floor(remainingQuantity / requiredQuantityForPromo);
+      }
+
+      noPromotionQuantity = promoQuantity - freeItems * applicablePromotion.buy;
+      this.receipt.addItem(promotionalProduct, promoQuantity);
+      promotionalProduct.reduceQuantity(promoQuantity);
+      remainingQuantity -= promoQuantity;
+
+      const { discount, appliedPromotions } = this.calculatePromotionDiscount();
+      this.receipt.applyPromotion(discount, appliedPromotions);
+    }
+    return { remainingQuantity, noPromotionQuantity };
+  }
+
+  async addNoPromotion(
+    name,
+    regularProduct,
+    remainingQuantity,
+    flag,
+    noPromotionQuantity
+  ) {
+    if (remainingQuantity > 0 && regularProduct) {
+      const nonPromotionQuantity = Math.min(
+        regularProduct.quantity,
+        remainingQuantity
+      );
+
+      const totalNonPromotionQuantity =
+        noPromotionQuantity + nonPromotionQuantity;
+
+      await this.askPurcahse(flag, name, totalNonPromotionQuantity);
+
+      this.receipt.addItem(regularProduct, nonPromotionQuantity);
+      regularProduct.reduceQuantity(nonPromotionQuantity);
+      return nonPromotionQuantity;
+    }
+    return 0;
+  }
+
+  async askPurcahse(flag, name, totalNonPromotionQuantity) {
+    if (flag) {
+      const proceedWithRegularPrice = await InputView.askRegularPricePurchase(
+        name,
+        totalNonPromotionQuantity
+      );
+      if (!proceedWithRegularPrice) {
+        throw new Error(
+          `${name}의 프로모션 할인이 적용되지 않은 수량은 결제하지 않았습니다.`
+        );
+      }
+    }
+  }
+
+  async membershipCheck(totalNonPromotionalPrice) {
+    const membership = await InputView.askMembership();
+    if (membership) {
+      const membershipDiscount = Math.min(totalNonPromotionalPrice * 0.3, 8000);
+      this.receipt.applyMembershipDiscount(membershipDiscount);
+    }
+  }
+
+  calculatePromotionDiscount() {
+    let discount = 0;
+    const appliedPromotions = [];
+    this.receipt.items.forEach(({ product, quantity }) => {
+      const applicablePromotion = this.promotions.find(
+        (promotion) => promotion.name === product.promotion
+      );
+
+      if (
+        applicablePromotion &&
+        applicablePromotion.isApplicable(DateTimes.now())
+      ) {
         const freeItems = Math.floor(quantity / (applicablePromotion.buy + 1));
         discount += freeItems * product.price;
-
         if (freeItems > 0) {
           appliedPromotions.push({ product, freeQuantity: freeItems });
         }
-      } else {
-        // 프로모션이 적용되지 않는 제품의 금액을 합산
-        nonPromotionalTotal += product.price * quantity;
       }
     });
-
-    return { discount, appliedPromotions, nonPromotionalTotal };
+    return { discount, appliedPromotions };
   }
 
-  processOrder(selectedItems, membership) {
-    selectedItems.forEach(({ name, quantity }) => {
-      const product = this.products.find((item) => item.name === name);
-      if (!product || product.quantity < quantity) {
-        throw new Error("재고가 부족합니다.");
-      }
-      this.receipt.addItem(product, quantity);
-      product.reduceQuantity(quantity);
-    });
-
-    // 프로모션 할인 적용
-    const { discount, appliedPromotions, nonPromotionalTotal } =
-      this.calculatePromotionDiscount();
-    this.receipt.applyPromotion(discount, appliedPromotions);
-    console.log(nonPromotionalTotal);
-    // 멤버십 할인 적용 (프로모션 할인이 적용되지 않은 금액에만)
-    if (membership) {
-      const membershipDiscount = Math.min(nonPromotionalTotal * 0.3, 8000);
-      this.receipt.applyMembershipDiscount(membershipDiscount);
-    }
+  getProductVariants(name) {
+    const promotionalProduct = this.products.find(
+      (product) => product.name === name && product.promotion !== "null"
+    );
+    const regularProduct = this.products.find(
+      (product) => product.name === name && product.promotion === "null"
+    );
+    return { promotionalProduct, regularProduct };
   }
 }
 

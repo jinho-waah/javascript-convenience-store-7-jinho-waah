@@ -1,2 +1,3 @@
+- feat: 프로모션, 멤버십 적용
 - feat: 기본 입출력 구현
 - Initial commit

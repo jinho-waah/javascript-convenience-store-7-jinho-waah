@@ -41,7 +41,7 @@ export const OutputView = {
   },
 
   itemPrint(product, quantity) {
-    if (product.name.length < 3) {
+    if (product.name.length < 4) {
       Console.print(
         `${product.name} \t\t${quantity} \t${product.price * quantity}`
       );
@@ -53,7 +53,7 @@ export const OutputView = {
   },
 
   promotionPrint({ productName, freeQuantity }) {
-    if (productName.length < 3) {
+    if (productName.length < 4) {
       Console.print(`${productName} \t\t${freeQuantity}`);
     } else {
       Console.print(`${productName} \t${freeQuantity} `);
