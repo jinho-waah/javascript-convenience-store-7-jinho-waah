@@ -108,24 +108,4 @@ export const InputView = {
       }
     }
   },
-
-  async askRegularPricePurchase(productName, quantity) {
-    while (true) {
-      try {
-        const input = await Console.readLineAsync(
-          `\n현재 ${productName} ${quantity}개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)\n`
-        );
-
-        if (input === "Y") {
-          return true;
-        } else if (input === "N") {
-          return false;
-        } else {
-          throw Console.print("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");
-        }
-      } catch (error) {
-        throw Console.print("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");
-      }
-    }
-  },
 };

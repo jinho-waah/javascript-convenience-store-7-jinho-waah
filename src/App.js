@@ -1,11 +1,9 @@
 import { OutputView } from "./OutputView.js";
 import { InputView } from "./InputView.js";
 import Store from "./Store.js";
-import { Console } from "@woowacourse/mission-utils";
 
 class App {
   async run() {
-    // try {
     const store = new Store();
     await store.loadProducts();
     await store.loadPromotions();
@@ -19,9 +17,6 @@ class App {
       const isContinue = await InputView.askContinue();
       if (!isContinue) break;
     }
-    // } catch (error) {
-    //   throw error;
-    // }
   }
 }
 
