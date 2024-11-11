@@ -24,21 +24,23 @@ export const OutputView = {
     Console.print("\n==============W 편의점================");
     Console.print("상품명\t\t수량\t금액");
 
-    // 구매한 항목 출력
     receipt.items.forEach((item) => {
       this.itemPrint(item.product, item.quantity);
     });
 
-    Console.print("=============증      정===============");
+    if (receipt.promotionDetails.length > 0) {
+      Console.print("=============증      정===============");
+      receipt.promotionDetails.forEach(({ productName, freeQuantity }) => {
+        this.promotionPrint({ productName, freeQuantity });
+      });
+    }
 
-    // 증정 항목 출력
     receipt.promotionDetails.forEach(({ productName, freeQuantity }) => {
       this.promotionPrint({ productName, freeQuantity });
     });
 
     Console.print("====================================");
 
-    // 총 구매액, 행사 할인, 멤버십 할인, 내실 돈 출력
     Console.print(`총구매액 ${receipt.total.toLocaleString()}`);
     Console.print(`행사할인 -${receipt.promotionDiscount.toLocaleString()}`);
     Console.print(`멤버십할인 -${receipt.membershipDiscount.toLocaleString()}`);
