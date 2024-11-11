@@ -9,8 +9,9 @@ export const InputView = {
         );
 
         const list = input.split(",");
+        // 형식이 잘못되었을 때 throw로 예외 발생
         if (list.length === 1 && (input.match(/\[/g) || []).length > 1) {
-          Console.print(
+          throw new Error(
             "[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요."
           );
         }
@@ -18,7 +19,7 @@ export const InputView = {
         const items = input.match(/\[(.*?)\]/g).map((item) => {
           const [name, quantity] = item.replace(/[\[\]]/g, "").split("-");
           if (!name || isNaN(parseInt(quantity))) {
-            Console.print(
+            throw new Error(
               "[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요."
             );
           }
@@ -26,9 +27,8 @@ export const InputView = {
         });
         return items;
       } catch (error) {
-        Console.print(
-          "[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요."
-        );
+        // 오류 메시지 출력 후 while 루프 재실행
+        Console.print(error.message);
       }
     }
   },
@@ -85,10 +85,10 @@ export const InputView = {
           case "N":
             return false;
           default:
-            throw Console.print("[ERROR] 입력 값이 정확하지 않습니다.");
+            Console.print("[ERROR] 입력 값이 정확하지 않습니다.");
         }
       } catch (error) {
-        throw Console.print("[ERROR] 입력 값이 정확하지 않습니다.");
+        Console.print("[ERROR] 입력 값이 정확하지 않습니다.");
       }
     }
   },
