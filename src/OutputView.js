@@ -28,7 +28,7 @@ export const OutputView = {
       this.itemPrint(item.product, item.quantity);
     });
 
-    Console.print("=============증      정===============");
+    Console.print("=============증 정===============");
 
     receipt.promotionDetails.forEach(({ productName, freeQuantity }) => {
       this.promotionPrint({ productName, freeQuantity });
