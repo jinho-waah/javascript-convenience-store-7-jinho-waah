@@ -97,10 +97,10 @@ export const InputView = {
           case "N":
             return false;
           default:
-            throw new Error(" 입력 값이 정확하지 않습니다.");
+            throw new Error("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");
         }
       } catch (error) {
-        throw new Error(" 입력 값이 정확하지 않습니다.");
+        throw new Error("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");
       }
     }
   },
@@ -117,14 +117,10 @@ export const InputView = {
         } else if (input === "N") {
           return false;
         } else {
-          throw new Error(
-            "[ERROR] 입력 값이 정확하지 않습니다. Y 또는 N을 입력해 주세요."
-          );
+          throw new Error("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");
         }
       } catch (error) {
-        throw new Error(
-          "[ERROR] 입력 값이 정확하지 않습니다. Y 또는 N을 입력해 주세요."
-        );
+        throw new Error("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");
       }
     }
   },
