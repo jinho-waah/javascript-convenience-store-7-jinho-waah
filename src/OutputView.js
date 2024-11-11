@@ -51,15 +51,15 @@ export const OutputView = {
   },
 
   itemPrint(product, quantity) {
-    const productName = product.name.padEnd(8, " ");
-    const quantityStr = String(quantity).padEnd(4, " ");
-    const totalPrice = String(product.price * quantity).padStart(6, " ");
+    const productName = product.name;
+    const quantityStr = String(quantity);
+    const totalPrice = String(product.price * quantity);
     Console.print(`${productName} ${quantityStr} ${totalPrice}`);
   },
 
   promotionPrint({ productName, freeQuantity }) {
-    const productNamePadded = productName.padEnd(8, " ");
-    const freeQuantityStr = String(freeQuantity).padStart(2, " ");
+    const productNamePadded = productName;
+    const freeQuantityStr = String(freeQuantity);
     Console.print(`${productNamePadded} ${freeQuantityStr}`);
   },
 };
