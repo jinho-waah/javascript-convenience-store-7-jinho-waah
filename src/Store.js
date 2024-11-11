@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import Product from "./Product.js";
 import Promotion from "./Promotion.js";
 import Receipt from "./Receipt.js";
-import { DateTimes } from "@woowacourse/mission-utils";
+import { Console, DateTimes } from "@woowacourse/mission-utils";
 import { InputView } from "./InputView.js";
 
 class Store {
@@ -57,44 +57,98 @@ class Store {
     return { promotionalProduct, regularProduct };
   }
 
-  async processOrder(selectedItems) {
-    this.receipt = new Receipt();
+  // async processOrder() {
+  //   const selectedItems = await InputView.readSelectedItems();
+  //   this.receipt = new Receipt();
+  //   let totalNonPromotionalPrice = 0;
 
-    let totalNonPromotionalPrice = 0;
+  //   for (const { name, quantity } of selectedItems) {
+  //     const { promotionalProduct, regularProduct } =
+  //       this.getProductVariants(name);
 
-    for (const { name, quantity } of selectedItems) {
-      const { promotionalProduct, regularProduct } =
-        this.getProductVariants(name);
+  //     let remainingQuantity = quantity;
+  //     let noPromotionQuantity = 0;
+  //     if (promotionalProduct?.quantity + regularProduct?.quantity < quantity) {
+  //       throw new Error(
+  //         "[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요."
+  //       );
+  //     }
+  //     if (!!promotionalProduct) {
+  //       ({ remainingQuantity, noPromotionQuantity } = await this.addPromotion(
+  //         promotionalProduct,
+  //         remainingQuantity,
+  //         noPromotionQuantity
+  //       ));
+  //     }
 
-      let remainingQuantity = quantity;
-      let noPromotionQuantity = 0;
-      if (promotionalProduct.quantity + regularProduct.quantity < quantity) {
-        throw new Error(
-          " 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요."
-        );
-      }
-      if (!!promotionalProduct) {
-        ({ remainingQuantity, noPromotionQuantity } = await this.addPromotion(
-          promotionalProduct,
-          remainingQuantity,
-          noPromotionQuantity
-        ));
-      }
+  //     if (!!regularProduct) {
+  //       const nonPromotionQuantity = await this.addNoPromotion(
+  //         name,
+  //         regularProduct,
+  //         remainingQuantity,
+  //         remainingQuantity < quantity,
+  //         noPromotionQuantity
+  //       );
+  //       totalNonPromotionalPrice +=
+  //         regularProduct?.price * nonPromotionQuantity;
+  //     }
+  //   }
 
-      if (!!regularProduct) {
-        const nonPromotionQuantity = await this.addNoPromotion(
-          name,
-          regularProduct,
-          remainingQuantity,
-          remainingQuantity < quantity,
-          noPromotionQuantity
-        );
-        totalNonPromotionalPrice +=
-          regularProduct?.price * nonPromotionQuantity;
+  //   await this.membershipCheck(totalNonPromotionalPrice);
+  // }
+
+  async processOrder() {
+    while (true) {
+      try {
+        const selectedItems = await InputView.readSelectedItems();
+        this.receipt = new Receipt();
+        let totalNonPromotionalPrice = 0;
+
+        for (const { name, quantity } of selectedItems) {
+          const { promotionalProduct, regularProduct } =
+            this.getProductVariants(name);
+          let remainingQuantity = quantity;
+          let noPromotionQuantity = 0;
+
+          if (
+            (promotionalProduct?.quantity || 0) +
+              (regularProduct?.quantity || 0) <
+            quantity
+          ) {
+            throw new Error(
+              "[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요."
+            );
+          }
+
+          if (promotionalProduct) {
+            ({ remainingQuantity, noPromotionQuantity } =
+              await this.addPromotion(
+                promotionalProduct,
+                remainingQuantity,
+                noPromotionQuantity
+              ));
+          }
+
+          if (regularProduct) {
+            const nonPromotionQuantity = await this.addNoPromotion(
+              name,
+              regularProduct,
+              remainingQuantity,
+              remainingQuantity < quantity,
+              noPromotionQuantity
+            );
+            totalNonPromotionalPrice +=
+              regularProduct.price * nonPromotionQuantity;
+          }
+        }
+
+        await this.membershipCheck(totalNonPromotionalPrice);
+
+        break;
+      } catch (error) {
+        Console.print(error.message);
       }
     }
-
-    await this.membershipCheck(totalNonPromotionalPrice);
   }
 
   async addPromotion(

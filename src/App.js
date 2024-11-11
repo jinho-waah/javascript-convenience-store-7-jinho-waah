@@ -12,18 +12,13 @@ class App {
       while (true) {
         OutputView.welcome();
         OutputView.printProducts(store.products);
-        const selectedItems = await InputView.readSelectedItems();
 
-        await store.processOrder(selectedItems);
+        await store.processOrder();
         OutputView.printReceipt(store.receipt);
         const isContinue = await InputView.askContinue();
         if (!isContinue) break;
       }
-
-      
     } catch (error) {
-      // throw new Error(`[ERROR]` + error.message);
-      // Console.print(`[ERROR] ${error.message}`);
       throw error;
     }
   }

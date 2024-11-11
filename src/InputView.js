@@ -7,17 +7,16 @@ export const InputView = {
         const input = await Console.readLineAsync(
           "\n구매하실 상품명과 수량을 입력해 주세요. (예: [사이다-2],[감자칩-1])\n"
         );
-        console.log(input);
         const items = input.match(/\[(.*?)\]/g).map((item) => {
           const [name, quantity] = item.replace(/[\[\]]/g, "").split("-");
           if (!name || isNaN(parseInt(quantity))) {
-            throw new Error(" 잘못된 형식입니다. 다시 입력해 주세요.");
+            throw new Error("[ERROR] 잘못된 형식입니다. 다시 입력해 주세요.");
           }
           return { name, quantity: parseInt(quantity) };
         });
         return items;
       } catch (error) {
-        throw new Error(" 잘못된 형식입니다. 다시 입력해 주세요.");
+        throw new Error("[ERROR] 잘못된 형식입니다. 다시 입력해 주세요.");
       }
     }
   },
@@ -34,10 +33,10 @@ export const InputView = {
           case "N":
             return false;
           default:
-            throw new Error(" 입력 값이 정확하지 않습니다.");
+            throw new Error("[ERROR] 입력 값이 정확하지 않습니다.");
         }
       } catch (error) {
-        throw new Error(" 입력 값이 정확하지 않습니다.");
+        throw new Error("[ERROR] 입력 값이 정확하지 않습니다.");
       }
     }
   },
@@ -54,10 +53,10 @@ export const InputView = {
           case "N":
             return false;
           default:
-            throw new Error(" 입력 값이 정확하지 않습니다.");
+            throw new Error("[ERROR] 입력 값이 정확하지 않습니다.");
         }
       } catch (error) {
-        throw new Error(" 입력 값이 정확하지 않습니다.");
+        throw new Error("[ERROR] 입력 값이 정확하지 않습니다.");
       }
     }
   },
@@ -74,10 +73,10 @@ export const InputView = {
           case "N":
             return false;
           default:
-            throw new Error(" 입력 값이 정확하지 않습니다.");
+            throw new Error("[ERROR] 입력 값이 정확하지 않습니다.");
         }
       } catch (error) {
-        throw new Error(" 입력 값이 정확하지 않습니다.");
+        throw new Error("[ERROR] 입력 값이 정확하지 않습니다.");
       }
     }
   },
@@ -115,12 +114,12 @@ export const InputView = {
           return false;
         } else {
           throw new Error(
-            " 입력 값이 정확하지 않습니다. Y 또는 N을 입력해 주세요."
+            "[ERROR] 입력 값이 정확하지 않습니다. Y 또는 N을 입력해 주세요."
           );
         }
       } catch (error) {
         throw new Error(
-          " 입력 값이 정확하지 않습니다. Y 또는 N을 입력해 주세요."
+          "[ERROR] 입력 값이 정확하지 않습니다. Y 또는 N을 입력해 주세요."
         );
       }
     }

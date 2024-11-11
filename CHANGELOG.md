@@ -1,3 +1,4 @@
+- refactor: minor issue
 - feat: 공백 삭제
 - feat: 기능 구현 완료
 - feat: 프로모션, 멤버십 적용

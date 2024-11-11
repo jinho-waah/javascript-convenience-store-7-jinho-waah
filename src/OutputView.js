@@ -9,27 +9,40 @@ export const OutputView = {
   printProducts(products) {
     products.forEach((product) => {
       const promotion = this.checkPromotion(product.promotion);
-      Console.print(
-        `- ${product.name} ${product.price}원 ${product.quantity}개${promotion}`
-      );
+      const formattedPrice = new Intl.NumberFormat().format(product.price);
+      if (product.quantity !== 0) {
+        Console.print(
+          `- ${product.name} ${formattedPrice}원 ${product.quantity}개${promotion}`
+        );
+      } else if (product.quantity === 0) {
+        Console.print(`- ${product.name} ${formattedPrice}원 재고 없음`);
+      }
     });
   },
 
   printReceipt(receipt) {
     Console.print("\n==============W 편의점================");
     Console.print("상품명\t\t수량\t금액");
+
+    // 구매한 항목 출력
     receipt.items.forEach((item) => {
       this.itemPrint(item.product, item.quantity);
     });
+
     Console.print("=============증      정===============");
+
+    // 증정 항목 출력
     receipt.promotionDetails.forEach(({ productName, freeQuantity }) => {
       this.promotionPrint({ productName, freeQuantity });
     });
+
     Console.print("====================================");
-    Console.print(`총구매액:\t\t${receipt.total}`);
-    Console.print(`행사할인:\t\t-${receipt.promotionDiscount}`);
-    Console.print(`멤버십할인:\t\t-${receipt.membershipDiscount}`);
-    Console.print(`내실돈:\t\t${receipt.calculateTotal()}`);
+
+    // 총 구매액, 행사 할인, 멤버십 할인, 내실 돈 출력
+    Console.print(`총구매액 ${receipt.total.toLocaleString()}`);
+    Console.print(`행사할인 -${receipt.promotionDiscount.toLocaleString()}`);
+    Console.print(`멤버십할인 -${receipt.membershipDiscount.toLocaleString()}`);
+    Console.print(`내실돈 ${receipt.calculateTotal().toLocaleString()}`);
   },
 
   checkPromotion(promotion) {
@@ -44,12 +57,12 @@ export const OutputView = {
     const productName = product.name.padEnd(8, " ");
     const quantityStr = String(quantity).padEnd(4, " ");
     const totalPrice = String(product.price * quantity).padStart(6, " ");
-    Console.print(`${productName}\t${quantityStr}\t${totalPrice}`);
+    Console.print(`${productName} ${quantityStr} ${totalPrice}`);
   },
 
   promotionPrint({ productName, freeQuantity }) {
     const productNamePadded = productName.padEnd(8, " ");
     const freeQuantityStr = String(freeQuantity).padStart(2, " ");
-    Console.print(`${productNamePadded}\t${freeQuantityStr}`);
+    Console.print(`${productNamePadded} ${freeQuantityStr}`);
   },
 };
